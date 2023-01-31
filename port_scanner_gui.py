@@ -99,12 +99,6 @@ class App(customtkinter.CTk):
     def stop_button_event(self):
         print("stop_button_event:")        
 
-    def change_appearance_mode_event(self, new_appearance_mode: str):
-        customtkinter.set_appearance_mode(new_appearance_mode)
-
-    def sidebar_button_event(self):
-        print("sidebar_button click")
-
 
 if __name__ == "__main__":
     app = App()
