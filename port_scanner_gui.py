@@ -17,8 +17,6 @@ customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "gre
 
 
 class App(customtkinter.CTk):
-    text_index = 0
-
     def __init__(self):
         super().__init__()
 
@@ -65,42 +63,32 @@ class App(customtkinter.CTk):
             try:
                 result = nm.scan(ip_add_entered, str(port))
                 port_status = (result['scan'][ip_add_entered]['tcp'][port]['state'])
-                print(f"Port {port} is {port_status}")
-                self.textbox.insert(str(self.text_index*100.0), f"Port {port} is {port_status}\n")
-                self.text_index = self.text_index + 1
-                self.textbox.see(str(self.text_index*100.0))
-                print(self.text_index)
+                self.textbox.insert(customtkinter.END, f"Port {port} is {port_status}\n")
             except:
-                print(f"Cannot scan port {port}.")
-                self.textbox.insert(str(self.text_index*100.0), f"Cannot scan port {port}.\n")
-                self.text_index = self.text_index + 1
+                self.textbox.insert(customtkinter.END, f"Cannot scan port {port}.\n")
 
-        self.textbox.insert(str(self.text_index*100.0), "="*100+"\n")
-        self.text_index = self.text_index + 1
+            self.textbox.see(customtkinter.END)
+
+        self.textbox.insert(customtkinter.END, "="*100+"\n")
+        self.textbox.see(customtkinter.END)
 
 
     def start_button_event(self):
         ip_add_entered = self.ip_address.get()
-        if ip_add_pattern.search(ip_add_entered):
-            print(f"{ip_add_entered} is a valid ip address")
-        else:
-            self.textbox.insert(str(self.text_index*100.0), f"{ip_add_entered} is not a valid ip address\n")
-            self.text_index = self.text_index + 1
-            self.textbox.insert(str(self.text_index*100.0), "="*100+"\n")
-            self.text_index = self.text_index + 1
+        if not ip_add_pattern.search(ip_add_entered):
+            self.textbox.insert(customtkinter.END, f"{ip_add_entered} is not a valid ip address\n")
+            self.textbox.insert(customtkinter.END, "="*100+"\n")
+            self.textbox.see(customtkinter.END)
             return
 
 
         port_min = self.min_port.get()
         port_max = self.max_port.get()
         port_range = port_min + '-' + port_max
-        if port_range_pattern.search(port_range):
-             print(f"{port_range} is a valid")
-        else:
-            self.textbox.insert(str(self.text_index*100.0), f"{port_range} is not a valid\n")
-            self.text_index = self.text_index + 1
-            self.textbox.insert(str(self.text_index*100.0), "="*100+"\n")
-            self.text_index = self.text_index + 1
+        if not port_range_pattern.search(port_range):
+            self.textbox.insert(customtkinter.END, f"{port_range} is not a valid\n")
+            self.textbox.insert(customtkinter.END, "="*100+"\n")
+            self.textbox.see(customtkinter.END)
             return
 
         threading.Thread(target=self.port_scan, args=(ip_add_entered, int(port_min), int(port_max)), daemon=True).start()
