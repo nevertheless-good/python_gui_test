@@ -9,8 +9,8 @@ import threading
 
 ip_add_pattern = re.compile("^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$")
 port_range_pattern = re.compile("([0-9]+)-([0-9]+)")
-port_min = 0
-port_max = 65535
+PORT_MIN = 0
+PORT_MAX = 65535
 
 customtkinter.set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
@@ -82,16 +82,23 @@ class App(customtkinter.CTk):
             return
 
 
-        port_min = self.min_port.get()
-        port_max = self.max_port.get()
-        port_range = port_min + '-' + port_max
-        if not port_range_pattern.search(port_range):
-            self.textbox.insert(customtkinter.END, f"{port_range} is not a valid\n")
+        min_port = self.min_port.get()
+        max_port = self.max_port.get()
+        port_range = min_port + '-' + max_port
+
+        if int(min_port) > int(max_port) or int(min_port) <= PORT_MIN or int(max_port) >= PORT_MAX:
+            self.textbox.insert(customtkinter.END, f"Port range({port_range}) is not a valid\n")
             self.textbox.insert(customtkinter.END, "="*100+"\n")
             self.textbox.see(customtkinter.END)
             return
 
-        threading.Thread(target=self.port_scan, args=(ip_add_entered, int(port_min), int(port_max)), daemon=True).start()
+        if not port_range_pattern.search(port_range):
+            self.textbox.insert(customtkinter.END, f"Port range({port_range}) is not a valid\n")
+            self.textbox.insert(customtkinter.END, "="*100+"\n")
+            self.textbox.see(customtkinter.END)
+            return
+
+        threading.Thread(target=self.port_scan, args=(ip_add_entered, int(min_port), int(max_port)), daemon=True).start()
 
 
     def stop_button_event(self):
