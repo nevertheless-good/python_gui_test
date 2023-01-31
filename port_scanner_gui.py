@@ -17,6 +17,8 @@ customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "gre
 
 
 class App(customtkinter.CTk):
+    text_index = 0
+
     def __init__(self):
         super().__init__()
 
@@ -38,7 +40,7 @@ class App(customtkinter.CTk):
         self.min_port.grid(row=1, column=2, columnspan=1, padx=(20, 0), pady=(20, 20), sticky="nsew")
 
         self.continue_label = customtkinter.CTkLabel(self, text="~", anchor="w")
-        self.continue_label.grid(row=1, column=3, padx=(20, 0), pady=(0, 0))        
+        self.continue_label.grid(row=1, column=3, padx=(20, 0), pady=(0, 0))
 
         self.max_port = customtkinter.CTkEntry(self, placeholder_text="End Port")
         self.max_port.grid(row=1, column=4, columnspan=1, padx=(20, 0), pady=(20, 20), sticky="nsew")
@@ -56,21 +58,25 @@ class App(customtkinter.CTk):
         self.textbox = customtkinter.CTkTextbox(self, width=100)
         self.textbox.grid(row=2, column=1, columnspan=6, padx=(20, 20), pady=(20, 20), sticky="nsew")
 
-       
     def port_scan(self, ip_add_entered, port_min, port_max):
         nm = nmap.PortScanner()
-        
+
         for port in range(int(port_min), int(port_max) + 1):
             try:
                 result = nm.scan(ip_add_entered, str(port))
                 port_status = (result['scan'][ip_add_entered]['tcp'][port]['state'])
                 print(f"Port {port} is {port_status}")
-                self.textbox.insert("0.0", f"Port {port} is {port_status}\n")
+                self.textbox.insert(str(self.text_index*100.0), f"Port {port} is {port_status}\n")
+                self.text_index = self.text_index + 1
+                self.textbox.see(str(self.text_index*100.0))
+                print(self.text_index)
             except:
                 print(f"Cannot scan port {port}.")
-                self.textbox.insert("0.0", f"Cannot scan port {port}.\n")
+                self.textbox.insert(str(self.text_index*100.0), f"Cannot scan port {port}.\n")
+                self.text_index = self.text_index + 1
 
-        self.textbox.insert("0.0", "="*100+"\n")
+        self.textbox.insert(str(self.text_index*100.0), "="*100+"\n")
+        self.text_index = self.text_index + 1
 
 
     def start_button_event(self):
@@ -78,8 +84,10 @@ class App(customtkinter.CTk):
         if ip_add_pattern.search(ip_add_entered):
             print(f"{ip_add_entered} is a valid ip address")
         else:
-            self.textbox.insert("0.0", f"{ip_add_entered} is not a valid ip address\n")
-            self.textbox.insert("0.0", "="*100+"\n")
+            self.textbox.insert(str(self.text_index*100.0), f"{ip_add_entered} is not a valid ip address\n")
+            self.text_index = self.text_index + 1
+            self.textbox.insert(str(self.text_index*100.0), "="*100+"\n")
+            self.text_index = self.text_index + 1
             return
 
 
@@ -89,16 +97,17 @@ class App(customtkinter.CTk):
         if port_range_pattern.search(port_range):
              print(f"{port_range} is a valid")
         else:
-            self.textbox.insert("0.0", f"{port_range} is not a valid\n")
-            self.textbox.insert("0.0", "="*100+"\n")
+            self.textbox.insert(str(self.text_index*100.0), f"{port_range} is not a valid\n")
+            self.text_index = self.text_index + 1
+            self.textbox.insert(str(self.text_index*100.0), "="*100+"\n")
+            self.text_index = self.text_index + 1
             return
 
         threading.Thread(target=self.port_scan, args=(ip_add_entered, int(port_min), int(port_max)), daemon=True).start()
 
 
     def stop_button_event(self):
-        print("stop_button_event:")        
-
+        print("stop_button_event:")
 
 if __name__ == "__main__":
     app = App()
