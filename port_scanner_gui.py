@@ -28,29 +28,29 @@ class App(customtkinter.CTk):
         self.grid_columnconfigure(1, weight=1)
         self.grid_rowconfigure(2, weight=1)
 
-        self.ip_address = customtkinter.CTkEntry(self, placeholder_text="IP Address")
+        self.ip_address = customtkinter.CTkEntry(self, placeholder_text="IP Address", font=customtkinter.CTkFont(size=15, weight="bold"))
         self.ip_address.grid(row=1, column=1, columnspan=1, padx=(20, 0), pady=(20, 20), sticky="nsew")
 
-        self.min_port = customtkinter.CTkEntry(self, placeholder_text="Start Port")
+        self.min_port = customtkinter.CTkEntry(self, placeholder_text="Start Port", font=customtkinter.CTkFont(size=15, weight="bold"))
         self.min_port.grid(row=1, column=2, columnspan=1, padx=(20, 0), pady=(20, 20), sticky="nsew")
 
-        self.continue_label = customtkinter.CTkLabel(self, text="~", anchor="w")
+        self.continue_label = customtkinter.CTkLabel(self, text="~", anchor="w", font=customtkinter.CTkFont(size=15, weight="bold"))
         self.continue_label.grid(row=1, column=3, padx=(20, 0), pady=(0, 0))
 
-        self.max_port = customtkinter.CTkEntry(self, placeholder_text="End Port")
+        self.max_port = customtkinter.CTkEntry(self, placeholder_text="End Port", font=customtkinter.CTkFont(size=15, weight="bold"))
         self.max_port.grid(row=1, column=4, columnspan=1, padx=(20, 0), pady=(20, 20), sticky="nsew")
 
 
-        self.start_button = customtkinter.CTkButton(master=self, fg_color="transparent", border_width=2, text_color=("gray10", "#DCE4EE"))
+        self.start_button = customtkinter.CTkButton(master=self, fg_color="transparent", border_width=2, text_color=("gray10", "#DCE4EE"), font=customtkinter.CTkFont(size=15, weight="bold"))
         self.start_button.grid(row=1, column=5, padx=(20, 20), pady=(20, 20), sticky="nsew")
         self.start_button.configure(text="Start", command=self.start_button_event)
 
-        self.stop_button = customtkinter.CTkButton(master=self, fg_color="transparent", border_width=2, text_color=("gray10", "#DCE4EE"))
+        self.stop_button = customtkinter.CTkButton(master=self, fg_color="transparent", border_width=2, text_color=("gray10", "#DCE4EE"), font=customtkinter.CTkFont(size=15, weight="bold"))
         self.stop_button.grid(row=1, column=6, padx=(20, 20), pady=(20, 20), sticky="nsew")
         self.stop_button.configure(text="Stop", command=self.stop_button_event)
 
 
-        self.textbox = customtkinter.CTkTextbox(self, width=100)
+        self.textbox = customtkinter.CTkTextbox(self, width=100, font=customtkinter.CTkFont(size=15, weight="bold"))
         self.textbox.grid(row=2, column=1, columnspan=6, padx=(20, 20), pady=(20, 20), sticky="nsew")
 
         self.running_status = False
