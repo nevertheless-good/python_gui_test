@@ -53,10 +53,17 @@ class App(customtkinter.CTk):
         self.textbox = customtkinter.CTkTextbox(self, width=100)
         self.textbox.grid(row=2, column=1, columnspan=6, padx=(20, 20), pady=(20, 20), sticky="nsew")
 
+        self.running_status = False
+
     def port_scan(self, ip_add_entered, port_min, port_max):
         nm = nmap.PortScanner()
 
         for port in range(int(port_min), int(port_max) + 1):
+
+            if self.running_status == False:
+                self.textbox.insert(customtkinter.END, "Stop port scan by User\n")
+                break
+
             try:
                 result = nm.scan(ip_add_entered, str(port))
                 port_status = (result['scan'][ip_add_entered]['tcp'][port]['state'])
@@ -71,6 +78,11 @@ class App(customtkinter.CTk):
 
 
     def start_button_event(self):
+        if self.running_status:
+            return
+
+        self.running_status = True
+
         ip_add_entered = self.ip_address.get()
         if not ip_add_pattern.search(ip_add_entered):
             self.textbox.insert(customtkinter.END, f"{ip_add_entered} is not a valid ip address\n")
@@ -99,7 +111,11 @@ class App(customtkinter.CTk):
 
 
     def stop_button_event(self):
-        print("stop_button_event:")
+        if self.running_status == False:
+            return
+        else:
+            self.running_status = False
+            return
 
 if __name__ == "__main__":
     app = App()
