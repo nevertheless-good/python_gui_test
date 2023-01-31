@@ -23,14 +23,11 @@ class App(customtkinter.CTk):
         # configure window
         self.title("Port Scanner v1.0")
         self.geometry(f"{1100}x{580}")
+        self.resizable(False, False)
 
-        # configure grid layout (4x4)
         self.grid_columnconfigure(1, weight=1)
-        # self.grid_columnconfigure(2, weight=0)
         self.grid_rowconfigure(2, weight=1)
 
-
-        # create main entry and button
         self.ip_address = customtkinter.CTkEntry(self, placeholder_text="IP Address")
         self.ip_address.grid(row=1, column=1, columnspan=1, padx=(20, 0), pady=(20, 20), sticky="nsew")
 
