@@ -22,45 +22,44 @@ class App(customtkinter.CTk):
 
         # configure window
         self.title("Port Scanner v1.0")
-        self.geometry(f"{1000}x{800}")
+        self.geometry(f"{500}x{800}")
         self.resizable(False, False)
 
-        self.grid_columnconfigure(1, weight=1)
-        self.grid_rowconfigure(3, weight=1)
+        self.grid_columnconfigure((1, 3), weight=1)
+        self.grid_rowconfigure(4, weight=1)
 
         self.ip_address = customtkinter.CTkEntry(self, placeholder_text="IPv4 Address", font=customtkinter.CTkFont(size=15, weight="bold"))
-        self.ip_address.grid(row=1, column=1, columnspan=1, padx=(20, 0), pady=(20, 20), sticky="nsew")
-
-        self.min_port = customtkinter.CTkEntry(self, placeholder_text="Start Port", font=customtkinter.CTkFont(size=15, weight="bold"))
-        self.min_port.grid(row=1, column=2, columnspan=1, padx=(20, 0), pady=(20, 20), sticky="nsew")
-
-        self.continue_label = customtkinter.CTkLabel(self, text="~", anchor="w", font=customtkinter.CTkFont(size=15, weight="bold"))
-        self.continue_label.grid(row=1, column=3, padx=(20, 0), pady=(0, 0))
-
-        self.max_port = customtkinter.CTkEntry(self, placeholder_text="End Port", font=customtkinter.CTkFont(size=15, weight="bold"))
-        self.max_port.grid(row=1, column=4, columnspan=1, padx=(20, 0), pady=(20, 20), sticky="nsew")
-
+        self.ip_address.grid(row=1, column=1, columnspan=3, padx=(20, 0), pady=(5, 5), sticky="nsew")
 
         self.start_button = customtkinter.CTkButton(master=self, fg_color="transparent", border_width=2, text_color=("gray10", "#DCE4EE"), font=customtkinter.CTkFont(size=15, weight="bold"))
-        self.start_button.grid(row=1, column=5, padx=(20, 20), pady=(20, 20), sticky="nsew")
-        self.start_button.configure(text="Start", command=self.start_button_event)
+        self.start_button.grid(row=1, column=4, padx=(20, 20), pady=(5, 5), sticky="nsew")
+        self.start_button.configure(text="Start", command=self.start_button_event)        
+
+        self.min_port = customtkinter.CTkEntry(self, placeholder_text="Start Port", font=customtkinter.CTkFont(size=15, weight="bold"))
+        self.min_port.grid(row=2, column=1, columnspan=1, padx=(20, 0), pady=(5, 5), sticky="nsew")
+
+        self.continue_label = customtkinter.CTkLabel(self, text="~", anchor="w", font=customtkinter.CTkFont(size=15, weight="bold"))
+        self.continue_label.grid(row=2, column=2, padx=(20, 0), pady=(0, 0))
+
+        self.max_port = customtkinter.CTkEntry(self, placeholder_text="End Port", font=customtkinter.CTkFont(size=15, weight="bold"))
+        self.max_port.grid(row=2, column=3, columnspan=1, padx=(20, 0), pady=(5, 5), sticky="nsew")
 
         self.stop_button = customtkinter.CTkButton(master=self, fg_color="transparent", border_width=2, text_color=("gray10", "#DCE4EE"), font=customtkinter.CTkFont(size=15, weight="bold"))
-        self.stop_button.grid(row=1, column=6, padx=(20, 20), pady=(20, 20), sticky="nsew")
+        self.stop_button.grid(row=2, column=4, padx=(20, 20), pady=(5, 5), sticky="nsew")
         self.stop_button.configure(text="Stop", command=self.stop_button_event)
 
         self.slider_progressbar_frame = customtkinter.CTkFrame(self, fg_color="transparent")
-        self.slider_progressbar_frame.grid(row=2, column=1, columnspan=6, padx=(20, 20), pady=(0, 0), sticky="nsew")
+        self.slider_progressbar_frame.grid(row=3, column=1, columnspan=4, padx=(10, 10), pady=(0, 0), sticky="nsew")
         self.slider_progressbar_frame.grid_columnconfigure(0, weight=1)
 
         self.progressbar = customtkinter.CTkProgressBar(self.slider_progressbar_frame)
-        self.progressbar.grid(row=2, column=0, columnspan=6, padx=(20, 20), pady=(10, 10), sticky="ew")
+        self.progressbar.grid(row=3, column=0, columnspan=4, padx=(10, 10), pady=(10, 10), sticky="ew")
 
         self.progressbar.configure(mode="determinate")
         self.progressbar.set(1.0)        
 
         self.textbox = customtkinter.CTkTextbox(self, width=100, font=customtkinter.CTkFont(size=15, weight="bold"))
-        self.textbox.grid(row=3, column=1, columnspan=6, padx=(20, 20), pady=(20, 20), sticky="nsew")
+        self.textbox.grid(row=4, column=1, columnspan=4, padx=(20, 20), pady=(20, 20), sticky="nsew")
 
         self.running_status = False
 
@@ -90,7 +89,7 @@ class App(customtkinter.CTk):
 
             self.textbox.see(customtkinter.END)
 
-        self.textbox.insert(customtkinter.END, "="*100+"\n")
+        self.textbox.insert(customtkinter.END, "="*44+"\n")
         self.textbox.see(customtkinter.END)
         self.progressbar.set(1.0)
         self.running_status = False
@@ -100,12 +99,17 @@ class App(customtkinter.CTk):
         if self.running_status:
             return
 
-        self.running_status = True
-
         ip_add_entered = self.ip_address.get()
+
+        if ip_add_entered == "":
+            self.textbox.insert(customtkinter.END, f"IP address is empty\n")
+            self.textbox.insert(customtkinter.END, "="*44+"\n")
+            self.textbox.see(customtkinter.END)
+            return            
+
         if not ip_add_pattern.search(ip_add_entered):
             self.textbox.insert(customtkinter.END, f"{ip_add_entered} is not a valid ip address\n")
-            self.textbox.insert(customtkinter.END, "="*100+"\n")
+            self.textbox.insert(customtkinter.END, "="*44+"\n")
             self.textbox.see(customtkinter.END)
             return
 
@@ -114,18 +118,32 @@ class App(customtkinter.CTk):
         max_port = self.max_port.get()
         port_range = min_port + '-' + max_port
 
-        if int(min_port) > int(max_port) or int(min_port) <= PORT_MIN or int(max_port) >= PORT_MAX:
-            self.textbox.insert(customtkinter.END, f"Port range({port_range}) is not a valid\n")
-            self.textbox.insert(customtkinter.END, "="*100+"\n")
+        if min_port == "":
+            self.textbox.insert(customtkinter.END, f"Start port is empty\n")
+            self.textbox.insert(customtkinter.END, "="*44+"\n")
             self.textbox.see(customtkinter.END)
-            return
+            return              
+
+        if max_port == "":
+            self.textbox.insert(customtkinter.END, f"End port is empty\n")
+            self.textbox.insert(customtkinter.END, "="*44+"\n")
+            self.textbox.see(customtkinter.END)
+            return              
+
 
         if not port_range_pattern.search(port_range):
             self.textbox.insert(customtkinter.END, f"Port range({port_range}) is not a valid\n")
-            self.textbox.insert(customtkinter.END, "="*100+"\n")
+            self.textbox.insert(customtkinter.END, "="*44+"\n")
             self.textbox.see(customtkinter.END)
             return
 
+        if int(min_port) > int(max_port) or int(min_port) <= PORT_MIN or int(max_port) >= PORT_MAX:
+            self.textbox.insert(customtkinter.END, f"Port range({port_range}) is not a valid\n")
+            self.textbox.insert(customtkinter.END, "="*44+"\n")
+            self.textbox.see(customtkinter.END)
+            return
+
+        self.running_status = True
         threading.Thread(target=self.port_scan, args=(ip_add_entered, int(min_port), int(max_port)), daemon=True).start()
 
 
