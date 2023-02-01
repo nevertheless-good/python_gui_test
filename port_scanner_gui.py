@@ -22,13 +22,13 @@ class App(customtkinter.CTk):
 
         # configure window
         self.title("Port Scanner v1.0")
-        self.geometry(f"{1100}x{580}")
+        self.geometry(f"{1000}x{800}")
         self.resizable(False, False)
 
         self.grid_columnconfigure(1, weight=1)
-        self.grid_rowconfigure(2, weight=1)
+        self.grid_rowconfigure(3, weight=1)
 
-        self.ip_address = customtkinter.CTkEntry(self, placeholder_text="IP Address", font=customtkinter.CTkFont(size=15, weight="bold"))
+        self.ip_address = customtkinter.CTkEntry(self, placeholder_text="IPv4 Address", font=customtkinter.CTkFont(size=15, weight="bold"))
         self.ip_address.grid(row=1, column=1, columnspan=1, padx=(20, 0), pady=(20, 20), sticky="nsew")
 
         self.min_port = customtkinter.CTkEntry(self, placeholder_text="Start Port", font=customtkinter.CTkFont(size=15, weight="bold"))
@@ -49,25 +49,42 @@ class App(customtkinter.CTk):
         self.stop_button.grid(row=1, column=6, padx=(20, 20), pady=(20, 20), sticky="nsew")
         self.stop_button.configure(text="Stop", command=self.stop_button_event)
 
+        self.slider_progressbar_frame = customtkinter.CTkFrame(self, fg_color="transparent")
+        self.slider_progressbar_frame.grid(row=2, column=1, columnspan=6, padx=(20, 20), pady=(0, 0), sticky="nsew")
+        self.slider_progressbar_frame.grid_columnconfigure(0, weight=1)
+
+        self.progressbar = customtkinter.CTkProgressBar(self.slider_progressbar_frame)
+        self.progressbar.grid(row=2, column=0, columnspan=6, padx=(20, 20), pady=(10, 10), sticky="ew")
+
+        self.progressbar.configure(mode="determinate")
+        self.progressbar.set(1.0)        
 
         self.textbox = customtkinter.CTkTextbox(self, width=100, font=customtkinter.CTkFont(size=15, weight="bold"))
-        self.textbox.grid(row=2, column=1, columnspan=6, padx=(20, 20), pady=(20, 20), sticky="nsew")
+        self.textbox.grid(row=3, column=1, columnspan=6, padx=(20, 20), pady=(20, 20), sticky="nsew")
 
         self.running_status = False
 
     def port_scan(self, ip_add_entered, port_min, port_max):
         nm = nmap.PortScanner()
 
+        progress_scale = port_max - port_min + 1
+        progress_count = 0
+
         for port in range(int(port_min), int(port_max) + 1):
 
             if self.running_status == False:
                 self.textbox.insert(customtkinter.END, "Stop port scan by User\n")
+                self.progressbar.set(1.0)
                 break
+
+            self.progressbar.set(progress_count / progress_scale)
+            progress_count = progress_count + 1            
 
             try:
                 result = nm.scan(ip_add_entered, str(port))
                 port_status = (result['scan'][ip_add_entered]['tcp'][port]['state'])
                 self.textbox.insert(customtkinter.END, f"Port {port} is {port_status}\n")
+
             except:
                 self.textbox.insert(customtkinter.END, f"Cannot scan port {port}.\n")
 
@@ -75,6 +92,8 @@ class App(customtkinter.CTk):
 
         self.textbox.insert(customtkinter.END, "="*100+"\n")
         self.textbox.see(customtkinter.END)
+        self.progressbar.set(1.0)
+        self.running_status = False
 
 
     def start_button_event(self):
